@@ -1,142 +1,409 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Example of the Authorization Code flow with Spotify</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="container">
-      <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
-        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
-      </div>
-      <div id="loggedin">
-        <div id="user-profile">
+    <head>
+        <title>Spotify op Catena</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="style.css" />
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            #login,
+            #loggedin {
+                display: none;
+            }
+            .text-overflow {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                width: 500px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 
+			user-read-private
+			user-read-email 
+			user-read-recently-played  Get Current User's Recently Played Tracks
+			user-read-currently-playing Get Information About The User's Current Playback
+			user-read-playback-state'; Get Information About The User's Current Playback 
+			  -->
+        <div class="container" style="margin-top: 1%;">
+            <div class="row">
+                <svg style="width: 25%;" viewBox="0 0 1134 340" class="spotify-logo--text">
+                    <title>Spotify</title>
+                    <path
+                        fill="currentColor"
+                        d="M8 171c0 92 76 168 168 168s168-76 168-168S268 4 176 4 8 79 8 171zm230 78c-39-24-89-30-147-17-14 2-16-18-4-20 64-15 118-8 162 19 11 7 0 24-11 18zm17-45c-45-28-114-36-167-20-17 5-23-21-7-25 61-18 136-9 188 23 14 9 0 31-14 22zM80 133c-17 6-28-23-9-30 59-18 159-15 221 22 17 9 1 37-17 27-54-32-144-35-195-19zm379 91c-17 0-33-6-47-20-1 0-1 1-1 1l-16 19c-1 1-1 2 0 3 18 16 40 24 64 24 34 0 55-19 55-47 0-24-15-37-50-46-29-7-34-12-34-22s10-16 23-16 25 5 39 15c0 0 1 1 2 1s1-1 1-1l14-20c1-1 1-1 0-2-16-13-35-20-56-20-31 0-53 19-53 46 0 29 20 38 52 46 28 6 32 12 32 22 0 11-10 17-25 17zm95-77v-13c0-1-1-2-2-2h-26c-1 0-2 1-2 2v147c0 1 1 2 2 2h26c1 0 2-1 2-2v-46c10 11 21 16 36 16 27 0 54-21 54-61s-27-60-54-60c-15 0-26 5-36 17zm30 78c-18 0-31-15-31-35s13-34 31-34 30 14 30 34-12 35-30 35zm68-34c0 34 27 60 62 60s62-27 62-61-26-60-61-60-63 27-63 61zm30-1c0-20 13-34 32-34s33 15 33 35-13 34-32 34-33-15-33-35zm140-58v-29c0-1 0-2-1-2h-26c-1 0-2 1-2 2v29h-13c-1 0-2 1-2 2v22c0 1 1 2 2 2h13v58c0 23 11 35 34 35 9 0 18-2 25-6 1 0 1-1 1-2v-21c0-1 0-2-1-2h-2c-5 3-11 4-16 4-8 0-12-4-12-12v-54h30c1 0 2-1 2-2v-22c0-1-1-2-2-2h-30zm129-3c0-11 4-15 13-15 5 0 10 0 15 2h1s1-1 1-2V93c0-1 0-2-1-2-5-2-12-3-22-3-24 0-36 14-36 39v5h-13c-1 0-2 1-2 2v22c0 1 1 2 2 2h13v89c0 1 1 2 2 2h26c1 0 1-1 1-2v-89h25l37 89c-4 9-8 11-14 11-5 0-10-1-15-4h-1l-1 1-9 19c0 1 0 3 1 3 9 5 17 7 27 7 19 0 30-9 39-33l45-116v-2c0-1-1-1-2-1h-27c-1 0-1 1-1 2l-28 78-30-78c0-1-1-2-2-2h-44v-3zm-83 3c-1 0-2 1-2 2v113c0 1 1 2 2 2h26c1 0 1-1 1-2V134c0-1 0-2-1-2h-26zm-6-33c0 10 9 19 19 19s18-9 18-19-8-18-18-18-19 8-19 18zm245 69c10 0 19-8 19-18s-9-18-19-18-18 8-18 18 8 18 18 18zm0-34c9 0 17 7 17 16s-8 16-17 16-16-7-16-16 7-16 16-16zm4 18c3-1 5-3 5-6 0-4-4-6-8-6h-8v19h4v-6h4l4 6h5zm-3-9c2 0 4 1 4 3s-2 3-4 3h-4v-6h4z"
+                    ></path>
+                </svg>
+            </div>
+            <div id="login">
+                <h1>Session expired</h1>
+                <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+            </div>
+            <div id="loggedin">
+                <div id="user-profile"></div>
+                <!-- <div id="currently-playing">
+					</div>	 -->
+                <div class="row">
+                    <div class="col-xs-12">&nbsp;</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-9">
+                        <div id="current-playback"></div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div id="recently-played"></div>
+                    </div>
+                </div>
+                <div id="oauth" ></div>
+               <!--  <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button> -->
+            </div>
         </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
-      </div>
-    </div>
+        <script id="user-profile-template" type="text/x-handlebars-template">
+            <div class="subtitle">{{display_name}}</div>
+        </script>
+        <!-- 
+			<script id="currently-playing-template" type="text/x-handlebars-template">
+			  <h1>Now playing</h1>
+			  <div class="media">
+			    <div class="media-body">
+			      <dl class="dl-horizontal">
+			        <dt>Track</dt><dd>{{item.name}}</dd>
+			        <dt>Artist</dt><dd>{{item.artists.0.name}}</dd>
+			      </dl>
+			    </div>
+			  </div>
+			</script> -->
+        <script id="recently-played-template" type="text/x-handlebars-template">
+            <div class="title">Recent afgespeeld</div>
+            <hr />
 
-    <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
-      <div class="media">
-        <div class="pull-left">
-          <img class="media-object" width="150" src="{{images.0.url}}" />
-        </div>
-        <div class="media-body">
-          <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-            <dt>Id</dt><dd>{{id}}</dd>
-            <dt>Email</dt><dd>{{email}}</dd>
-            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-            <dt>Country</dt><dd>{{country}}</dd>
-          </dl>
-        </div>
-      </div>
-    </script>
+            <table class="table table-dark">
+            <tbody>
+            <tr>
+              <td>{{items.0.track.artists.0.name}}</td>
+              <td>{{items.0.track.name}} </td>
+             <!--  <td>{{items.0.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.1.track.artists.0.name}}</td>
+              <td>{{items.1.track.name}} </td>
+             <!--  <td>{{items.1.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.2.track.artists.0.name}}</td>
+              <td>{{items.2.track.name}} </td>
+            <!--         <td>{{items.2.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.3.track.artists.0.name}}</td>
+              <td>{{items.3.track.name}} </td>
+              <!-- <td>{{items.3.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.4.track.artists.0.name}}</td>
+              <td>{{items.4.track.name}} </td>
+              <!-- <td>{{items.4.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.5.track.artists.0.name}}</td>
+              <td>{{items.5.track.name}} </td>
+              <!-- <td>{{items.5.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.5.track.artists.0.name}}</td>
+              <td>{{items.5.track.name}} </td>
+              <!-- <td>{{items.5.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.6.track.artists.0.name}}</td>
+              <td>{{items.6.track.name}} </td>
+              <!-- <td>{{items.6.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.7.track.artists.0.name}}</td>
+              <td>{{items.7.track.name}} </td>
+              <!-- <td>{{items.7.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.8.track.artists.0.name}}</td>
+              <td>{{items.8.track.name}} </td>
+              <!-- <td>{{items.5.played_at}}</td> -->
+            </tr>
+            <tr>
+              <td>{{items.9.track.artists.0.name}}</td>
+              <td>{{items.9.track.name}} </td>
+              <!-- <td>{{items.9.played_at}}</td> -->
+            </tr
+            <tr>
+              <td>{{items.10.track.artists.0.name}}</td>
+              <td>{{items.10.track.name}} </td>
+              <!-- <td>{{items.10.played_at}}</td> -->
+            </tr>
+            </tbody>
+            </table>
+        </script>
+        <script id="current-playback-template" type="text/x-handlebars-template">
+            <hr />
+                <div class="row">
+                 <div class="col-xs-4">
+                 <div class="row">
+                   <div class="col-xs-12">
+                     <div class="title">{{item.name}}</div>
+                   </div>
+                 </div>
+                 <br>
+                 <div class="row">
+                   <div class="col-xs-12">
+                     <div class="title">{{item.artists.0.name}}</div>
+                   </div>
+                 </div>
+            <br>
+            <div class="subtitle">populariteit: {{obj.stars}}</div>
+               </div>
 
-    <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
-      </dl>
-    </script>
+            <div class="col-xs-8">
+            <img id="album_img" src='{{item.album.images.0.url}}'  height={{item.album.images.0.height}} width={{item.album.images.0.width}}>
+            </div>
+            </div>
+            <div class="row">
+            <div class="col-xs-12">
+            <div class="subtitle">Speelt af op {{device.name}} ({{device.type}}) op {{device.volume_percent}}% volume.</div>
+            </div>
+            </div>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script>
-      (function() {
 
-        /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
-        function getHashParams() {
-          var hashParams = {};
-          var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
-          }
-          return hashParams;
-        }
 
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
+            <div class="media">
+                 <div class="media-body">
+                   <dl class="dl-horizontal">
+            <!--           <dt></dt><dd>{{progress_msEx.string}}  {{progress_perc}}</dd>
+                   <dt></dt><dd>{{item.duration_msEx.string}}</dd> -->
 
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
-
-        var params = getHashParams();
-
-        var access_token = params.access_token,
-            refresh_token = params.refresh_token,
-            error = params.error;
-
-        if (error) {
-          alert('There was an error during the authentication');
-        } else {
-          if (access_token) {
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                  $('#login').hide();
-                  $('#loggedin').show();
+                   <dt></dt><dd></dd>
+             </dl>
+                 </div>
+               </div>
+            <div class="Root__now-playing-bar">
+            <div class="now-playing-bar-container">
+            <div class="now-playing-bar">
+            <div class="now-playing-bar__center">
+            <div class="player-controls" dir="ltr" role="complementary" aria-label="Player controls">
+            	<div class="playback-bar">
+            		<div id="playback-bar__progress-time" class="playback-bar__progress-time">{{progress_msEx.string}}</div>
+            		<div class="progress-bar">
+            			<div class="middle-align progress-bar__bg">
+            				<div class="progress-bar__fg_wrapper">
+            					<div id="progress-bar__fg" class="progress-bar__fg" style="transform: translateX({{progress_css}}%)"></div>
+            				</div>
+            			</div>
+            		</div>
+            		<div class="playback-bar__progress-time">{{item.duration_msEx.string}}</div>
+            	</div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+        </script>
+        <script id="oauth-template" type="text/x-handlebars-template">
+          <h2><a href="#access_token={{access_token}}&refresh_token={{refresh_token}}">oAuth link</a></h2>
+        </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script>
+            (function () {
+                /**
+                 * Obtains parameters from the hash of the URL
+                 * @return Object
+                 */
+                function getHashParams() {
+                    var hashParams = {};
+                    var e,
+                        r = /([^&;=]+)=?([^&;]*)/g,
+                        q = window.location.hash.substring(1);
+                    while ((e = r.exec(q))) {
+                        hashParams[e[1]] = decodeURIComponent(e[2]);
+                    }
+                    return hashParams;
                 }
-            });
-          } else {
-              // render initial screen
-              $('#login').show();
-              $('#loggedin').hide();
-          }
 
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
-        }
-      })();
-    </script>
-  </body>
+                var userProfileSource = document.getElementById("user-profile-template").innerHTML,
+                    userProfileTemplate = Handlebars.compile(userProfileSource),
+                    userProfilePlaceholder = document.getElementById("user-profile");
+
+                //var currentlyPlayingSource = document.getElementById('currently-playing-template').innerHTML,
+                //  currentlyPlayingTemplate = Handlebars.compile(currentlyPlayingSource),
+                //currentlyPlayingPlaceholder = document.getElementById('currently-playing');
+
+                var recentlyPlayedSource = document.getElementById("recently-played-template").innerHTML,
+                    recentlyPlayedTemplate = Handlebars.compile(recentlyPlayedSource),
+                    recentlyPlayedPlaceholder = document.getElementById("recently-played");
+
+                var currentPlaybackSource = document.getElementById("current-playback-template").innerHTML,
+                    currentPlaybackTemplate = Handlebars.compile(currentPlaybackSource),
+                    currentPlaybackPlaceholder = document.getElementById("current-playback");
+
+                var oauthSource = document.getElementById("oauth-template").innerHTML,
+                    oauthTemplate = Handlebars.compile(oauthSource),
+                    oauthPlaceholder = document.getElementById("oauth");
+
+                var params = getHashParams();
+
+                var access_token = params.access_token,
+                    refresh_token = params.refresh_token,
+                    error = params.error;
+
+                if (error) {
+                    alert("There was an error during the authentication");
+                } else {
+                    if (access_token) {
+                        // render oauth info
+                        oauthPlaceholder.innerHTML = oauthTemplate({
+                            access_token: access_token,
+                            refresh_token: refresh_token,
+                        });
+                        var obj = [];
+/* 
+                      ###  FUNCTIONS  ###
+  */                       
+                        function convertTrackDuration(input) {
+                            var objRet = [];
+                            var vizdur = Number(input) / 60000; //all seconds
+                            objRet.raw = vizdur;
+                            objRet.min = vizdur - (vizdur % 1); //Quotient
+                            var vizdursec = parseInt((vizdur % 1) * 60); //remainder
+                            if (parseInt(vizdursec) < 10) {
+                                objRet.sec = "0" + vizdursec;
+                            } else {
+                                objRet.sec = vizdursec;
+                            }
+                            objRet.string = objRet.min + ":" + objRet.sec;
+                            return objRet;
+                        }
+
+                       
+                        //get user info
+                        $.ajax({
+                            url: "https://api.spotify.com/v1/me",
+                            headers: {
+                                Authorization: "Bearer " + access_token,
+                            },
+                            success: function (response) {
+                                obj.userProfile = response;
+                                //console.log(response)
+                                userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                                $("#login").hide();
+                                $("#loggedin").show();
+                            },
+                        });
+                        //get recent playing info
+                        getRP = function () {
+                            $.ajax({
+                                url: "https://api.spotify.com/v1/me/player/recently-played",
+                                headers: {
+                                    Authorization: "Bearer " + access_token,
+                                },
+                                success: function (response) {
+                                    obj.recentlyPlayed = response;
+                                    //console.log(response)
+                                    recentlyPlayedPlaceholder.innerHTML = recentlyPlayedTemplate(response);
+                                },
+                            });
+                        };
+                        //get current playing info
+                        getCP = function () {
+                            $.ajax({
+                                url: "https://api.spotify.com/v1/me/player",
+                                headers: {
+                                    Authorization: "Bearer " + access_token,
+                                },
+                                success: function (response) {
+                                    if (response != undefined) {
+                                        response.progress_msEx = convertTrackDuration(response.progress_ms);
+                                        response.item.duration_msEx = convertTrackDuration(response.item.duration_ms);
+                                        response.progress_perc = parseInt((response.progress_ms / response.item.duration_ms) * 100);
+                                        response.progress_css = (response.progress_ms / response.item.duration_ms) * 100 - 100;
+                                        response.stars = Math.round(response.item.popularity/20);
+                                        obj.currentPlayback = response;
+                                        //console.log(parseInt(obj.currentPlayback.progress_perc))
+                                        /* console.log($("#album_img")) */
+                                        if (($("#album_img").attr('src') == "")|| (obj.currentPlayback.progress_perc <=1 && obj.currentPlayback.progress_perc >0)) { 
+                                          currentPlaybackPlaceholder.innerHTML = currentPlaybackTemplate(obj.currentPlayback); 
+                                        }                                       
+                                        
+                                                    
+                                        //console.log(currentPlaybackPlaceholder);
+                                    }
+                                },
+                            });
+                        };
+                        var i = 0;
+                        getCP();
+                        getRP();
+                        setInterval(function () {
+                            i++
+                            if(i % 60==0){
+                                  $.ajax({
+                                url: "/refresh_token",
+                                data: {
+                                    refresh_token: refresh_token,
+                                },
+                            }).done(function (data) {
+                                access_token = data.access_token;
+                                oauthPlaceholder.innerHTML = oauthTemplate({
+                                    access_token: access_token,
+                                    refresh_token: refresh_token,
+                                });
+                                
+                              });
+                            }
+                            getRP();
+                            getCP();
+                        }, 1000);
+                        /* console.log(obj); */
+                    } else {
+                        // render initial screen
+                        $("#login").show();
+                        $("#loggedin").hide();
+                    }
+
+                    //document.getElementById('obtain-new-token').addEventListener('click',
+                    $(window).load(function() {
+                            /* console.log('loaded') */
+                            currentPlaybackPlaceholder.innerHTML = currentPlaybackTemplate(obj.currentPlayback);
+                    });
+                    //if(obj.currentPlayback) {
+                    setInterval(function () {
+                        var playing = obj.currentPlayback.is_playing;
+                        var progress = document.querySelector("#progress-bar__fg");
+                        var progressTime = document.querySelector("#playback-bar__progress-time");
+                        if (playing && obj.currentPlayback.progress_perc <100) {
+                            var newProgress = (obj.currentPlayback.progress_ms += 1000);
+                            obj.currentPlayback.progress_msEx = convertTrackDuration(newProgress);
+                            obj.currentPlayback.progress_perc = ((newProgress / obj.currentPlayback.item.duration_ms) * 100);
+                            obj.currentPlayback.progress_css = (newProgress / obj.currentPlayback.item.duration_ms) * 100 - 100;
+                        }
+
+/*                         console.log("CSS:", obj.currentPlayback.progress_css);
+                        console.log("%:", obj.currentPlayback.progress_perc); */
+
+                        
+                         
+                        progressTime.innerHTML = obj.currentPlayback.progress_msEx.string;
+                        progress.style.transform = "translateX(" + obj.currentPlayback.progress_css + "%)";
+                    }, 1000);
+                    //  }
+                    //else {console.log("No object currentPlayback")}
+                }
+            })();
+        </script>
+    </body>
 </html>
-

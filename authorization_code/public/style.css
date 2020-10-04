@@ -1,0 +1,187 @@
+html {
+    background-color: #181818;
+    height: 100%;
+}
+
+body, button, input {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: .015em;
+    font-weight: var(--glue-font-weight-normal);
+    color: #b3b3b3;
+    text-transform: none;
+	background-color:rgba(0, 0, 0, 0);
+    font-family: spotify-circular,spotify-circular-cyrillic,spotify-circular-arabic,spotify-circular-hebrew,Helvetica Neue,Helvetica,Arial,Hiragino Kaku Gothic Pro,Meiryo,MS Gothic,sans-serif;
+}
+
+.container {
+
+	min-width:80%;
+	min-height:80%;
+	max-height:1080px;
+	
+}
+
+.title {
+ font-size:2.5em;
+}
+
+
+.subtitle{
+ font-size:0.75em;
+}
+
+
+td {
+	font-size:1.5em;
+}
+
+.Root__now-playing-bar {
+    grid-area: now-playing-bar;
+    background-color: #181818;
+    width: 100%;
+}
+.now-playing-bar-container {
+    min-width: 620px;
+    background-color: #282828;
+    border-top: 1px solid #000;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+.now-playing-bar {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    height: 90px;
+    padding: 0 16px;
+}
+
+.now-playing-bar__center {
+    width: 100%;
+    /* max-width: 722px; */
+}
+
+.player-controls, .player-controls__buttons {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-direction: normal;
+}
+
+.player-controls {
+    -webkit-box-orient: vertical;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.playback-bar {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.playback-bar__progress-time {
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: .015em;
+    min-width: 40px;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 3em;
+    position: relative;
+    width: 100%;
+	background-color:rgba(0, 0, 0, 0);
+}
+.progress-bar__bg {
+    background-color: #404040;
+    border-radius: 0.5em;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 2em;
+    width: 100%;
+}
+
+.middle-align {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.progress-bar__fg_wrapper {
+    overflow: hidden;
+    width: 100%;
+    height: 2em;
+    border-radius: 1em;
+}
+
+.progress-bar__fg, .progress-bar__slider {
+    -webkit-transition-duration: .1s;
+    transition-duration: .1s;
+}
+
+.progress-bar__fg {
+    -webkit-transition-property: background-color;
+    transition-property: background-color;
+    -webkit-transition-timing-function: cubic-bezier(1,0,.7,1);
+    transition-timing-function: cubic-bezier(1,0,.7,1);
+    background-color: #b3b3b3;
+    border-radius: 1em;
+    height: 2em;
+    width: 100%;
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    will-change: transform,background-color;
+}
+
+.playback-bar__progress-time {
+    font-size: 2em;
+    line-height: 4em;
+    letter-spacing: .015em;
+    min-width: 80px;
+    text-align: center;
+}
+
+
+/* <div class="progress-bar__fg" style="transform: translateX(-67.9608%);"></div> */
