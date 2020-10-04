@@ -23,7 +23,9 @@ body, button, input {
 }
 
 .title {
- font-size:2.5em;
+ font-size:2.2em;
+ white-space: nowrap;
+ text-overflow: ellipsis;
 }
 
 
@@ -183,5 +185,7 @@ td {
     text-align: center;
 }
 
-
+#oauth > h6 > a {
+    opacity:50%;
+}
 /* <div class="progress-bar__fg" style="transform: translateX(-67.9608%);"></div> */

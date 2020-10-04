@@ -54,10 +54,10 @@
                     <div class="col-xs-12">&nbsp;</div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-9">
+                    <div id="cp_div" class="col-xs-9">
                         <div id="current-playback"></div>
                     </div>
-                    <div class="col-xs-3">
+                    <div id="rp_div" class="col-xs-3">
                         <div id="recently-played"></div>
                     </div>
                 </div>
@@ -151,26 +151,25 @@
         </script>
         <script id="current-playback-template" type="text/x-handlebars-template">
             <hr />
-                <div class="row">
-                 <div class="col-xs-4">
-                 <div class="row">
-                   <div class="col-xs-12">
-                     <div class="title">{{item.name}}</div>
-                   </div>
-                 </div>
-                 <br>
-                 <div class="row">
-                   <div class="col-xs-12">
-                     <div class="title">{{item.artists.0.name}}</div>
-                   </div>
-                 </div>
-            <br>
-            <div class="subtitle">populariteit: {{obj.stars}}</div>
-               </div>
-
-            <div class="col-xs-8">
-            <img id="album_img" src='{{item.album.images.0.url}}'  height={{item.album.images.0.height}} width={{item.album.images.0.width}}>
-            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="title">{{item.name}}</div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="title">{{item.artists.0.name}}</div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="subtitle">populariteit: {{obj.stars}}</div>
+                </div>
+                <div class="col-xs-8">
+                    <img id="album_img" src='{{item.album.images.0.url}}'  height={{item.album.images.0.height}} width={{item.album.images.0.width}}>
+                </div>
             </div>
             <div class="row">
             <div class="col-xs-12">
@@ -213,7 +212,7 @@
             </div>
         </script>
         <script id="oauth-template" type="text/x-handlebars-template">
-          <h2><a href="#access_token={{access_token}}&refresh_token={{refresh_token}}">oAuth link</a></h2>
+          <h6><a href="#access_token={{access_token}}&refresh_token={{refresh_token}}">oAuth link</a></h6>
         </script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -326,6 +325,8 @@
                                     Authorization: "Bearer " + access_token,
                                 },
                                 success: function (response) {
+                                    console.log(response)
+                                    //console.log(obj)
                                     if (response != undefined) {
                                         response.progress_msEx = convertTrackDuration(response.progress_ms);
                                         response.item.duration_msEx = convertTrackDuration(response.item.duration_ms);
@@ -337,19 +338,28 @@
                                         /* console.log($("#album_img")) */
                                         if (($("#album_img").attr('src') == "")|| (obj.currentPlayback.progress_perc <=1 && obj.currentPlayback.progress_perc >0)) { 
                                           currentPlaybackPlaceholder.innerHTML = currentPlaybackTemplate(obj.currentPlayback); 
+                                          getRP(); 
                                         }                                       
                                         
                                                     
                                         //console.log(currentPlaybackPlaceholder);
+                                    }
+                                    else{
+                                        clearInterval(refreshInterval);
+                                        clearInterval(progressInterval);
+                                        $('#cp_div').hide();
+                                        $('#rp_div').removeClass('col-xs-3')
+                                        $('#rp_div').addClass('col-xs-8')
                                     }
                                 },
                             });
                         };
                         var i = 0;
                         getCP();
-                        getRP();
-                        setInterval(function () {
+
+                        var refreshInterval = setInterval(function () {
                             i++
+                            //once every 60sec new token
                             if(i % 60==0){
                                   $.ajax({
                                 url: "/refresh_token",
@@ -365,7 +375,7 @@
                                 
                               });
                             }
-                            getRP();
+                            //get current playing
                             getCP();
                         }, 1000);
                         /* console.log(obj); */
@@ -378,29 +388,32 @@
                     //document.getElementById('obtain-new-token').addEventListener('click',
                     $(window).load(function() {
                             /* console.log('loaded') */
+                            getRP();
                             currentPlaybackPlaceholder.innerHTML = currentPlaybackTemplate(obj.currentPlayback);
                     });
-                    //if(obj.currentPlayback) {
-                    setInterval(function () {
-                        var playing = obj.currentPlayback.is_playing;
-                        var progress = document.querySelector("#progress-bar__fg");
-                        var progressTime = document.querySelector("#playback-bar__progress-time");
-                        if (playing && obj.currentPlayback.progress_perc <100) {
-                            var newProgress = (obj.currentPlayback.progress_ms += 1000);
-                            obj.currentPlayback.progress_msEx = convertTrackDuration(newProgress);
-                            obj.currentPlayback.progress_perc = ((newProgress / obj.currentPlayback.item.duration_ms) * 100);
-                            obj.currentPlayback.progress_css = (newProgress / obj.currentPlayback.item.duration_ms) * 100 - 100;
+                    
+                    var progressInterval = setInterval(function () {
+                        if(typeof(obj.currentPlayback) !== 'undefined') {
+                            var playing = obj.currentPlayback.is_playing;
+                            var progress = document.querySelector("#progress-bar__fg");
+                            var progressTime = document.querySelector("#playback-bar__progress-time");
+                            if (playing && obj.currentPlayback.progress_perc <100) {
+                                var newProgress = (obj.currentPlayback.progress_ms += 1000);
+                                obj.currentPlayback.progress_msEx = convertTrackDuration(newProgress);
+                                obj.currentPlayback.progress_perc = ((newProgress / obj.currentPlayback.item.duration_ms) * 100);
+                                obj.currentPlayback.progress_css = (newProgress / obj.currentPlayback.item.duration_ms) * 100 - 100;
+                            }
+
+    /*                         console.log("CSS:", obj.currentPlayback.progress_css);
+                            console.log("%:", obj.currentPlayback.progress_perc); */
+
+                            
+                            
+                            progressTime.innerHTML = obj.currentPlayback.progress_msEx.string;
+                            progress.style.transform = "translateX(" + obj.currentPlayback.progress_css + "%)";
                         }
-
-/*                         console.log("CSS:", obj.currentPlayback.progress_css);
-                        console.log("%:", obj.currentPlayback.progress_perc); */
-
-                        
-                         
-                        progressTime.innerHTML = obj.currentPlayback.progress_msEx.string;
-                        progress.style.transform = "translateX(" + obj.currentPlayback.progress_css + "%)";
                     }, 1000);
-                    //  }
+                  
                     //else {console.log("No object currentPlayback")}
                 }
             })();
