@@ -1,0 +1,5 @@
+{
+    "client_id":"abc" ,
+    "client_secret": "cde",
+    "redirect_uri": "http://localhost:8888/callback/"
+}
