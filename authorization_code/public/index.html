@@ -168,7 +168,7 @@
                     <div class="subtitle">populariteit: {{obj.stars}}</div>
                 </div>
                 <div class="col-xs-8">
-                    <img id="album_img" src='{{item.album.images.0.url}}'  height={{item.album.images.0.height}} width={{item.album.images.0.width}}>
+                    <img id="album_img"  src='{{item.album.images.0.url}}'  height={{item.album.images.0.height}} width={{item.album.images.0.width}}>
                 </div>
             </div>
             <div class="row">
@@ -325,7 +325,7 @@
                                     Authorization: "Bearer " + access_token,
                                 },
                                 success: function (response) {
-                                    console.log(response)
+                                    //console.log(response)
                                     //console.log(obj)
                                     if (response != undefined) {
                                         response.progress_msEx = convertTrackDuration(response.progress_ms);
