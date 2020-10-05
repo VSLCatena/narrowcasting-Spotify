@@ -8,6 +8,8 @@
  */
 // 
 
+//https://accounts.spotify.com/authorize?client_id=CLIENTID&response_type=code&redirect_uri=http%3A%2F%2F{URL}%2Fcallback%2F&scope=user-read-recently-played%20user-read-currently-playing&state={STATE}
+
 var json = require('./client.json'); //with path
 
 var express = require('express'); // Express web server framework
@@ -15,7 +17,7 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-const fs = require('fs-extra');
+//const fs = require('fs-extra');
 
 var client_id = json.client_id ; // Your client id 
 var client_secret = json.client_secret ; // Your secret
@@ -57,7 +59,7 @@ app.get('/login', function(req, res) {
       client_id: client_id,
       scope: scope,
       redirect_uri: redirect_uri,
-      state: state
+      //state: state
     }));
 });
 
@@ -65,14 +67,15 @@ app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
   // after checking the state parameter
-  const tokens = fs.readJsonSync(__dirname +'/tokens.json')
+  //const tokens = fs.readJsonSync(__dirname +'/tokens.json')
   //console.log(tokens) // 
 
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
-  if (state === null || state !== storedState) {
+  //if (state === null || state !== storedState) {
+  if (state === null || state !== state) {
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
@@ -104,7 +107,7 @@ app.get('/callback', function(req, res) {
           json: true
         };
 
-        fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
+        //fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
@@ -144,7 +147,7 @@ app.get('/refresh_token', function(req, res) {
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
-      fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
+      //fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
       res.send({
         'access_token': access_token
       });
