@@ -15,7 +15,7 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-
+const fs = require('fs-extra');
 
 var client_id = json.client_id ; // Your client id 
 var client_secret = json.client_secret ; // Your secret
@@ -47,7 +47,7 @@ app.use(express.static(__dirname + '/public'))
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
-  res.cookie(stateKey, state);
+  res.cookie(stateKey, state,{maxAge: 315569520000}); //set to 10y
 
   // your application requests authorization
   var scope = 'user-read-recently-played user-read-currently-playing';
@@ -65,6 +65,8 @@ app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
   // after checking the state parameter
+  const tokens = fs.readJsonSync(__dirname +'/tokens.json')
+  //console.log(tokens) // 
 
   var code = req.query.code || null;
   var state = req.query.state || null;
@@ -95,16 +97,18 @@ app.get('/callback', function(req, res) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
-
+        
         var options = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
+        fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
+
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -140,6 +144,7 @@ app.get('/refresh_token', function(req, res) {
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
+      fs.writeJsonSync(__dirname +'/tokens.json', {'access_token': access_token ,'refresh_token':refresh_token})
       res.send({
         'access_token': access_token
       });
